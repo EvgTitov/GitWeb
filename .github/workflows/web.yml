@@ -10,6 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+
+    # Логирование
+    - name: List files in root
+      run: ls -la
     # Клонирование репозитория
     - name: Checkout repository
       uses: actions/checkout@v3
