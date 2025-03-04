@@ -1,1 +1,41 @@
+name: GitHub Web Deployment
 
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Клонирование репозитория
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      
+    # Установка зависимостей
+    - name: Install dependencies
+      run: |
+        npm install
+        
+    # Сборка
+    - name: Build project
+      run: |
+        npm run build
+        
+    # Настройка GitHub Pages
+    - name: Configure GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@v4.3.3
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BRANCH: web
+        FOLDER: build
+        CLEAN: true
+        
+    # Шаг 5: Создание артов
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: build-artifact
+        path: build/
