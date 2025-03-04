@@ -1,1 +1,76 @@
+name: Deploy Website
 
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Шаг 1: Checkout репозитория
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+      
+    # Шаг 2: Установка зависимостей
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y nodejs npm
+        sudo npm install -g less
+        
+    # Шаг 3: Установка инструментов минификации
+    - name: Install Minification Tools
+      run: |
+        npm install postcss-cli
+        npm install cssnano
+        npm install uglify-js
+        
+    # Шаг 4: Компиляция LESS в CSS
+    - name: Compile LESS
+      run: |
+        lessc less/main.less styles/styles.css
+        
+    # Шаг 5: Минификация CSS и JavaScript
+    - name: Minify CSS and JavaScript
+      run: |
+        # Минификация CSS через postcss
+        npx postcss styles/styles.css --use cssnano --output styles/styles.min.css
+        
+        # Минификация JavaScript
+        mkdir -p scripts
+        if [ -f "scripts/script.js" ]; then
+          npx uglifyjs scripts/script.js -c -m -o scripts/script.min.js
+        else
+          echo "Файл scripts/script.js не найден"
+        fi
+        
+    # Шаг 6: Проверка файлов
+    - name: Check Files
+      run: |
+        ls -la styles/styles.css
+        ls -la styles/styles.min.css
+        if [ -f "scripts/script.min.js" ]; then
+          ls -la scripts/script.min.js
+        else
+          echo "Файл scripts/script.min.js отсутствует"
+        fi
+        
+  # Шаг 7: Развертывание
+    - name: Deploy to Server
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.WEBSECRET }}
+        publish_dir: ./
+        
+    # Шаг 8: Отправка логов
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: deployment-logs
+        path: |
+          styles/
+          scripts/
+          *.log
