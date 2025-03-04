@@ -10,11 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-
-    # Логирование
-    - name: List files in root
-      run: ls -la
-      
+        
     # Клонирование репозитория
     - name: Checkout repository
       uses: actions/checkout@v3
@@ -29,12 +25,16 @@ jobs:
       run: |
         yarn install
         
-    # Сборка
+   # Логирование
+    - name: List files in root
+      run: ls -la
+      
+  # Сборка
     - name: Build project
       run: |
         yarn run build
         
-    # Настройка GitHub Pages
+  # Настройка GitHub Pages
     - name: Configure GitHub Pages
       uses: JamesIves/github-pages-deploy-action@v4.3.3
       with:
