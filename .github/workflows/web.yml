@@ -19,7 +19,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y nodejs npm
-        sudo npm install -g less
+        sudo apt-get install less
 
     # Шаг 3: Установка cssnano и uglify-js
     - name: Install Minification Tools
