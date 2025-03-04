@@ -24,7 +24,7 @@ jobs:
     # Шаг 3: Компиляция LESS в CSS
     - name: Compile LESS
       run: |
-        lessc styles/styles.less styles/styles.css
+        lessc less/main.less styles/styles.css
         
     # Шаг 4: Минификация CSS и JavaScript
     - name: Minify CSS and JavaScript
