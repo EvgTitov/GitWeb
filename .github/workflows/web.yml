@@ -20,46 +20,43 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y nodejs npm
         sudo npm install -g less
-
-    # Шаг 3: Установка cssnano и uglify-js
+        
+    # Шаг 3: Установка инструментов минификации
     - name: Install Minification Tools
       run: |
+        npm install postcss-cli
         npm install cssnano
         npm install uglify-js
         
-    # Шаг 3: Компиляция LESS в CSS
+    # Шаг 4: Компиляция LESS в CSS
     - name: Compile LESS
       run: |
         lessc less/main.less styles/styles.css
         
-    # Шаг 4: Минификация CSS и JavaScript
+    # Шаг 5: Минификация CSS и JavaScript
     - name: Minify CSS and JavaScript
       run: |
-        # Установка инструментов минификации
-        npm install -g cssnano
-        npm install -g uglify-js
-        
-        # Минификация CSS
-        cssnano css/main.css > styles/styles.min.css
+        # Минификация CSS через postcss
+        npx postcss styles/styles.css --use cssnano --output styles/styles.min.css
         
         # Минификация JavaScript
-        uglifyjs js/main.js -c -m -o scripts/script.min.js
+        npx uglifyjs scripts/script.js -c -m -o scripts/script.min.js
         
-    # Шаг 5: Проверка файлов
+    # Шаг 6: Проверка файлов
     - name: Check Files
       run: |
-        ls -la css/styles.css
+        ls -la styles/styles.css
         ls -la styles/styles.min.css
         ls -la scripts/script.min.js
         
-    # Шаг 6: Развертывание
+    # Шаг 7: Развертывание
     - name: Deploy to Server
       uses: peaceiris/actions-gh-pages@v3
       with:
-        github_token: ${{ secrets.WEBSECRET }}
+        github_token: ${{ secrets.WEBSECRET}}
         publish_dir: ./
         
-    # Шаг 7: Отправка логов
+    # Шаг 8: Отправка логов
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:
