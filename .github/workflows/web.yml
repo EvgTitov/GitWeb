@@ -35,7 +35,7 @@ jobs:
         
     # Шаг 5: Создание артов
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@latest
       with:
         name: build-artifact
         path: build/
