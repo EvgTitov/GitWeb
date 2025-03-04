@@ -55,7 +55,7 @@ jobs:
         
     # Шаг 7: Отправка логов
     - name: Upload Artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: deployment-logs
         path: |
