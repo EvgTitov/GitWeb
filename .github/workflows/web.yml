@@ -32,10 +32,3 @@ jobs:
         BRANCH: web
         FOLDER: build
         CLEAN: true
-        
-    # Шаг 5: Создание артов
-    - name: Upload artifact
-      uses: actions/upload-artifact@latest
-      with:
-        name: build-artifact
-        path: build/
