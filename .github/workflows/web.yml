@@ -17,12 +17,12 @@ jobs:
     # Установка зависимостей
     - name: Install dependencies
       run: |
-        npm install
+        yarn install
         
     # Сборка
     - name: Build project
       run: |
-        npm run build
+        yarn run build
         
     # Настройка GitHub Pages
     - name: Configure GitHub Pages
