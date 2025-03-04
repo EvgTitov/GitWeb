@@ -1,4 +1,4 @@
-name: Deploy Website
+name: Deploy Static Website
 
 on:
   push:
@@ -19,15 +19,25 @@ jobs:
         node-version: '18'
         cache: 'npm'
 
-    - name: Install dependencies
+    - name: Install global dependencies
       run: |
-        npm install less
+        npm install -g less
+        npm install -g cssnano
+        npm install -g uglify-js
+
+    - name: Install jQuery
+      run: |
+        mkdir node_modules
+        cd node_modules
         npm install jquery
 
     - name: Compile LESS to CSS
       run: |
-        npm install -g less
-        lessc styles/styles.less styles/styles.css
+        lessc styles/styles.less styles/styles.min.css
+
+    - name: Minify JavaScript
+      run: |
+        uglifyjs scripts/script.js -c -m -o scripts/script.min.js
 
     - name: Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@v4.3.3
