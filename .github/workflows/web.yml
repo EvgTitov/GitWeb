@@ -1,4 +1,4 @@
-name: Deploy Static Website
+name: Deploy Website
 
 on:
   push:
@@ -6,49 +6,59 @@ on:
       - main
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
-
+    
     steps:
-    - name: Checkout repository
+    # Шаг 1: Checkout репозитория
+    - name: Checkout Repository
       uses: actions/checkout@v3
-
-    - name: Use Node.js 18.x
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-        cache: 'npm'
-        cache-dependency-path: ./
-
-    - name: Install global dependencies
+      
+    # Шаг 2: Установка зависимостей
+    - name: Install Dependencies
       run: |
-        npm install -g less
+        sudo apt-get update
+        sudo apt-get install -y nodejs npm
+        sudo npm install -g less
+        
+    # Шаг 3: Компиляция LESS в CSS
+    - name: Compile LESS
+      run: |
+        lessc styles/styles.less styles/styles.css
+        
+    # Шаг 4: Минификация CSS и JavaScript
+    - name: Minify CSS and JavaScript
+      run: |
+        # Установка инструментов минификации
         npm install -g cssnano
         npm install -g uglify-js
-
-    - name: Install jQuery
+        
+        # Минификация CSS
+        cssnano css/main.css > styles/styles.min.css
+        
+        # Минификация JavaScript
+        uglifyjs js/main.js -c -m -o scripts/script.min.js
+        
+    # Шаг 5: Проверка файлов
+    - name: Check Files
       run: |
-        mkdir node_modules
-        cd node_modules
-        npm install jquery
-
-    - name: Compile LESS to CSS
-      run: |
-        lessc styles/styles.less styles/styles.min.css
-
-    - name: Minify JavaScript
-      run: |
-        uglifyjs scripts/script.js -c -m -o scripts/script.min.js
-
-    - name: Deploy to GitHub Pages
-      uses: JamesIves/github-pages-deploy-action@v4.3.3
+        ls -la css/styles.css
+        ls -la styles/styles.min.css
+        ls -la scripts/script.min.js
+        
+    # Шаг 6: Развертывание
+    - name: Deploy to Server
+      uses: peaceiris/actions-gh-pages@v3
       with:
-        GITHUB_TOKEN: ${{ secrets.WEBSECRET }}
-        BRANCH: web
-        FOLDER: .
-        CLEAN: true
-
-    - name: Check versions
-      run: |
-        node -v
-        npm -v
+        github_token: ${{ secrets.WEBSECRET }}
+        publish_dir: ./
+        
+    # Шаг 7: Отправка логов
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: deployment-logs
+        path: |
+          styles/
+          scripts/
+          *.log
