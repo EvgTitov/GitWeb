@@ -37,10 +37,10 @@ jobs:
     - name: Minify CSS and JavaScript
       run: |
         # Минификация CSS через postcss
-        npx postcss styles/styles.css --use cssnano --output styles/styles.min.css
+        npx postcss css/main.css --use cssnano --output styles/styles.min.css
         
         # Минификация JavaScript
-        npx uglifyjs scripts/script.js -c -m -o scripts/script.min.js
+        npx uglifyjs js/main.js -c -m -o scripts/script.min.js
         
     # Шаг 6: Проверка файлов
     - name: Check Files
